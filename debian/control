@@ -7,8 +7,10 @@ Build-Depends: debhelper-compat (= 13),
                d-shlibs,
                zlib1g-dev,
                python3 <!nocheck>,
-               xxd <!nocheck>
-Standards-Version: 4.6.0
+               xxd <!nocheck>,
+               libdebhelper-perl,
+               cmake
+Standards-Version: 4.6.2
 Vcs-Browser: https://salsa.debian.org/med-team/libdeflate
 Vcs-Git: https://salsa.debian.org/med-team/libdeflate.git
 Homepage: https://github.com/ebiggers/libdeflate
