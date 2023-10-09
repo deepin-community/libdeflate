@@ -1,4 +1,4 @@
 version=4
 
-https://github.com/ebiggers/libdeflate/releases/latest .*/v?@ANY_VERSION@@ARCHIVE_EXT@
-# skips pre-releases
+opts="filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%@PACKAGE@-$1.tar.gz%" \
+  https://github.com/ebiggers/libdeflate/tags .*/v?@ANY_VERSION@@ARCHIVE_EXT@

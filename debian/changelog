@@ -1,3 +1,77 @@
+libdeflate (1.18-1) unstable; urgency=medium
+
+  [ Lance Lin ]
+  * New upstream version
+  * d/patches: Removed patch, fixed upstream
+  * d/copyright: Update year to 2023
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Thu, 10 Aug 2023 10:21:56 +0200
+
+libdeflate (1.15-1) experimental; urgency=medium
+
+  [ Andreas Tille ]
+  * Team upload.
+  * New upstream version
+  * Standards-Version: 4.6.2 (routine-update)
+  * Build-Depends: libdebhelper-perl, cmake
+  * Adjust d-shlibs call
+
+  [ Michael R. Crusoe ]
+  * d/rules: fix building the tests
+  * d/rules: update location of benchmark program
+
+ -- Andreas Tille <tille@debian.org>  Wed, 04 Jan 2023 11:12:50 +0100
+
+libdeflate (1.14-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Lance Lin ]
+  * Update version to 1.14
+  * d/watch: fix regex
+
+ -- Lance Lin <lqi254@protonmail.com>  Mon, 03 Oct 2022 18:55:19 +0700
+
+libdeflate (1.12-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Andreas Tille ]
+  * d/watch: Use proper filename for download
+
+  [ Lance Lin ]
+  * Updated to new version (1.12)
+
+  [ Andreas Tille ]
+  * Standards-Version: 4.6.1 (routine-update)
+  * Remove trailing whitespace in debian/changelog (routine-update)
+
+ -- Andreas Tille <tille@debian.org>  Thu, 23 Jun 2022 15:30:05 +0200
+
+libdeflate (1.10-2) unstable; urgency=medium
+
+  * Team Upload.
+  * Add patch to fix FTBFS on armhf (Closes: #1006139)
+    + Thanks to Graham Inggs for pointing towards Ubuntu patch
+
+ -- Nilesh Patra <nilesh@debian.org>  Thu, 10 Mar 2022 23:35:02 +0530
+
+libdeflate (1.10-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+
+ -- Andreas Tille <tille@debian.org>  Sun, 20 Feb 2022 08:30:56 +0100
+
+libdeflate (1.9-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+  * Add missing build dependency on dh addon.
+  * Install pkgconfig file
+
+ -- Andreas Tille <tille@debian.org>  Wed, 19 Jan 2022 17:10:52 +0100
+
 libdeflate (1.8-1) unstable; urgency=medium
 
   * Team upload.

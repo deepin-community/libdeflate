@@ -13,22 +13,26 @@ else
 PROFILING_FLAG =
 endif
 
+override_dh_auto_configure:
+	dh_auto_configure -- -DLIBDEFLATE_BUILD_TESTS=1
+
 override_dh_auto_build:
 ifeq (,$(filter cross,$(DEB_BUILD_PROFILES)))
 	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) -fprofile-generate" \
 		LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) -fprofile-generate"\
 		CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)"\
-		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp \
-		all test_programs
-	for level in $(shell seq 1 12); do \
-		./benchmark -$${level} ./lib/deflate_compress.c > /dev/null; \
-	done
+		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp\
+		all
+	if [ -x ./obj-*/programs/benchmark ] ; then for level in $(shell seq 1 12); do \
+		echo Benchmarking level $${level} ; \
+		./obj-*/programs/benchmark -$${level} ./lib/deflate_compress.c > /dev/null; \
+	done; fi
 endif
 	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) $(PROFILING_FLAG)" \
 		LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) $(PROFILING_FLAG)"\
 		CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)"\
 		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp \
-		all test_programs
+		all
 
 override_dh_auto_install:
 	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) $(PROFILING_FLAG)" \
@@ -37,19 +41,12 @@ override_dh_auto_install:
 		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp \
 		install
 
-override_dh_auto_test:
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	dh_auto_test -- V=1
-	# SMOKEDATA=$(CURDIR)/README.md WRAPPER= tools/run_tests.sh \
-	# 	  -checksum_benchmarks -windows -android -mips \
-	# 	  -static_analysis -native -valgrind
-	# SMOKEDATA=$(CURDIR)/README.md WRAPPER= sh tools/exec_tests.sh
-endif
-
 override_dh_install:
 	dh_install
 	d-shlibmove --commit \
 		    --multiarch \
 		    --devunversioned \
 		    --exclude-la \
-		    debian/tmp/usr/lib/*.so
+		    --movedev "debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/*.pc" usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig \
+		    --movedev "debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/cmake" usr/lib/$(DEB_HOST_MULTIARCH)/ \
+		    debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.so

@@ -28,11 +28,11 @@
 #ifndef PROGRAMS_TEST_UTIL_H
 #define PROGRAMS_TEST_UTIL_H
 
-#include "prog_util.h"
+#include "prog_util.h" /* must be included first */
 
 #include <zlib.h> /* for comparison purposes */
 
-#ifdef __GNUC__
+#if defined(__GNUC__) || __has_attribute(noreturn)
 # define _noreturn __attribute__((noreturn))
 #else
 # define _noreturn
