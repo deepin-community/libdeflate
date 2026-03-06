@@ -1,25 +1,24 @@
 Source: libdeflate
-Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
-Uploaders: Michael R. Crusoe <crusoe@debian.org>
-Section: science
+Maintainer: Deflate Team <libdeflate@packages.debian.org>
+Uploaders: Nick Black <dankamongmen@gmail.com>,
+           Andrea Pappacoda <tachi@debian.org>
+Section: libs
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
-               d-shlibs,
-               zlib1g-dev,
+               dpkg-build-api (= 1),
+               cmake,
+               zlib1g-dev <!nocheck>,
                python3 <!nocheck>,
                xxd <!nocheck>,
-               libdebhelper-perl,
-               cmake
-Standards-Version: 4.6.2
+               help2man <!nodoc> <!cross>
+Standards-Version: 4.7.2
 Vcs-Browser: https://salsa.debian.org/med-team/libdeflate
 Vcs-Git: https://salsa.debian.org/med-team/libdeflate.git
 Homepage: https://github.com/ebiggers/libdeflate
-Rules-Requires-Root: no
 
 Package: libdeflate0
 Multi-Arch: same
 Architecture: any
-Section: libs
 Depends: ${shlibs:Depends},
          ${misc:Depends}
 Description: fast, whole-buffer DEFLATE-based compression and decompression
@@ -54,7 +53,7 @@ Description: headers for whole-buffer compression and decompression library
 
 Package: libdeflate-tools
 Architecture: any
-Section: libdevel
+Section: utils
 Depends: libdeflate0 (= ${binary:Version}),
          ${misc:Depends}, ${shlibs:Depends}
 Description: tools for whole-buffer compression and decompression library
@@ -68,4 +67,9 @@ Description: tools for whole-buffer compression and decompression library
  processors. In addition, libdeflate provides optional high compression modes
  that provide a better compression ratio than the zlib's "level 9".
  .
- This package provides the sample tools.
+ This package provides the sample tool: libdeflate-gzip (and libdeflate-gunzip).
+ This program which can be a drop-in replacement for standard "gzip" under
+ some circumstances.  Note that "libdeflate-gzip" has some  limitations; it is
+ provided for convenience and is **not** meant to be the main use case of
+ libdeflate.  It needs a lot of memory to process large files, and it omits
+ support for some infrequently-used options of GNU gzip.

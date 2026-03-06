@@ -4,49 +4,39 @@ export LC_ALL=C.UTF-8
 
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
+ifeq (alpha,$(DEB_HOST_ARCH))
+	export DEB_CFLAGS_MAINT_APPEND=-O1
+endif
+
+
 %:
 	dh $@
 
-ifeq (,$(filter cross,$(DEB_BUILD_PROFILES)))
-PROFILING_FLAG = -fprofile-use
+ifneq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
+ test := OFF
 else
-PROFILING_FLAG =
+ test := ON
 endif
 
+# -DCMAKE_BUILD_RPATH_USE_ORIGIN=ON can be dropped with debhelper compat 14+
 override_dh_auto_configure:
-	dh_auto_configure -- -DLIBDEFLATE_BUILD_TESTS=1
+	dh_auto_configure -- \
+		-DLIBDEFLATE_USE_SHARED_LIB=ON \
+		-DLIBDEFLATE_BUILD_TESTS=$(test) \
+		-DCMAKE_BUILD_RPATH_USE_ORIGIN=ON
 
-override_dh_auto_build:
-ifeq (,$(filter cross,$(DEB_BUILD_PROFILES)))
-	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) -fprofile-generate" \
-		LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) -fprofile-generate"\
-		CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)"\
-		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp\
-		all
-	if [ -x ./obj-*/programs/benchmark ] ; then for level in $(shell seq 1 12); do \
-		echo Benchmarking level $${level} ; \
-		./obj-*/programs/benchmark -$${level} ./lib/deflate_compress.c > /dev/null; \
-	done; fi
+execute_after_dh_auto_test:
+	scripts/run_tests.sh regular
+
+override_dh_installman:
+ifeq ($(filter nodoc cross,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)),)
+	LD_LIBRARY_PATH=$(CURDIR)/debian/libdeflate0/usr/lib/$(DEB_HOST_MULTIARCH) \
+		help2man --no-info --help-option=-h --version-option=-V \
+		-n "Compress the specified FILEs" \
+		debian/libdeflate-tools/usr/bin/libdeflate-gzip --output debian/libdeflate-gzip.1
+	LD_LIBRARY_PATH=$(CURDIR)/debian/libdeflate0/usr/lib/$(DEB_HOST_MULTIARCH) \
+		help2man --no-info --help-option=-h --version-option=-V \
+		-n "Decompress the specified FILEs" \
+		debian/libdeflate-tools/usr/bin/libdeflate-gunzip --output debian/libdeflate-gunzip.1
+	dh_installman
 endif
-	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) $(PROFILING_FLAG)" \
-		LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) $(PROFILING_FLAG)"\
-		CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)"\
-		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp \
-		all
-
-override_dh_auto_install:
-	dh_auto_build -- CFLAGS="$(shell dpkg-buildflags --get CFLAGS) $(PROFILING_FLAG)" \
-		LDFLAGS="$(shell dpkg-buildflags --get LDFLAGS) $(PROFILING_FLAG)"\
-		CPPFLAGS="$(shell dpkg-buildflags --get CPPFLAGS)"\
-		V=1 PREFIX=/usr DESTDIR=$(CURDIR)/debian/tmp \
-		install
-
-override_dh_install:
-	dh_install
-	d-shlibmove --commit \
-		    --multiarch \
-		    --devunversioned \
-		    --exclude-la \
-		    --movedev "debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig/*.pc" usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig \
-		    --movedev "debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/cmake" usr/lib/$(DEB_HOST_MULTIARCH)/ \
-		    debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.so

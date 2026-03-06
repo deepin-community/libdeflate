@@ -10,7 +10,7 @@ The supported formats are:
 - gzip (a.k.a. DEFLATE with a gzip wrapper)
 
 libdeflate is heavily optimized.  It is significantly faster than the zlib
-library, both for compression and decompression, and especially on x86
+library, both for compression and decompression, and especially on x86 and ARM
 processors.  In addition, libdeflate provides optional high compression modes
 that provide a better compression ratio than the zlib's "level 9".
 
@@ -37,6 +37,7 @@ For the release notes, see the [NEWS file](NEWS.md).
 - [Building](#building)
   - [Using CMake](#using-cmake)
   - [Directly integrating the library sources](#directly-integrating-the-library-sources)
+  - [Supported compilers](#supported-compilers)
 - [API](#api)
 - [Bindings for other programming languages](#bindings-for-other-programming-languages)
 - [DEFLATE vs. zlib vs. gzip](#deflate-vs-zlib-vs-gzip)
@@ -77,10 +78,40 @@ You should compile both `lib/*.c` and `lib/*/*.c`.  You don't need to worry
 about excluding irrelevant architecture-specific code, as this is already
 handled in the source files themselves using `#ifdef`s.
 
-It is strongly recommended to use either gcc or clang, and to use `-O2`.
-
 If you are doing a freestanding build with `-ffreestanding`, you must add
 `-DFREESTANDING` as well (matching what the `CMakeLists.txt` does).
+
+## Supported compilers
+
+- gcc: v4.9 and later
+- clang: v3.9 and later (upstream), Xcode 8 and later (Apple)
+- MSVC: Visual Studio 2015 and later
+- Other compilers: any other C99-compatible compiler should work, though if your
+  compiler pretends to be gcc, clang, or MSVC, it needs to be sufficiently
+  compatible with the compiler it pretends to be.
+
+The above are the minimums, but using a newer compiler allows more of the
+architecture-optimized code to be built.  libdeflate is most heavily optimized
+for gcc and clang, but MSVC is supported fairly well now too.
+
+The recommended optimization flag is `-O2`, and the `CMakeLists.txt` sets this
+for release builds.  `-O3` is fine too, but often `-O2` actually gives better
+results.  It's unnecessary to add flags such as `-mavx2` or `/arch:AVX2`, though
+you can do so if you want to.  Most of the relevant optimized functions are
+built regardless of such flags, and appropriate ones are selected at runtime.
+For the same reason, flags like `-mno-avx2` do *not* cause all code using the
+corresponding instruction set extension to be omitted from the binary; this is
+working as intended due to the use of runtime CPU feature detection.
+
+If using gcc, your gcc should always be paired with a binutils version that is
+not much older than itself, to avoid problems where the compiler generates
+instructions the assembler cannot assemble.  Usually systems have their gcc and
+binutils paired properly, but rarely a mismatch can arise in cases such as the
+user installing a newer gcc version without a proper binutils alongside it.
+Since libdeflate v1.22, the CMake-based build system will detect incompatible
+binutils versions and disable some optimized code accordingly.  In older
+versions of libdeflate, or if CMake is not being used, a too-old binutils can
+cause build errors like "no such instruction" from the assembler.
 
 # API
 
@@ -113,11 +144,13 @@ libdeflate from a programming language other than C or C++, consider using the
 following bindings:
 
 * C#: [LibDeflate.NET](https://github.com/jzebedee/LibDeflate.NET)
+* Delphi: [libdeflate-pas](https://github.com/zedxxx/libdeflate-pas)
 * Go: [go-libdeflate](https://github.com/4kills/go-libdeflate)
 * Java: [libdeflate-java](https://github.com/astei/libdeflate-java)
 * Julia: [LibDeflate.jl](https://github.com/jakobnissen/LibDeflate.jl)
 * Nim: [libdeflate-nim](https://github.com/gemesa/libdeflate-nim)
 * Perl: [Gzip::Libdeflate](https://github.com/benkasminbullock/gzip-libdeflate)
+* PHP: [ext-libdeflate](https://github.com/pmmp/ext-libdeflate)
 * Python: [deflate](https://github.com/dcwatson/deflate)
 * Ruby: [libdeflate-ruby](https://github.com/kaorimatz/libdeflate-ruby)
 * Rust: [libdeflater](https://github.com/adamkewley/libdeflater)
@@ -125,6 +158,11 @@ following bindings:
 Note: these are third-party projects which haven't necessarily been vetted by
 the authors of libdeflate.  Please direct all questions, bugs, and improvements
 for these bindings to their authors.
+
+Also, unfortunately many of these bindings bundle or pin an old version of
+libdeflate.  To avoid known issues in old versions and to improve performance,
+before using any of these bindings please ensure that the bundled or pinned
+version of libdeflate has been upgraded to the latest release.
 
 # DEFLATE vs. zlib vs. gzip
 

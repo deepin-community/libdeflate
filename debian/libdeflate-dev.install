@@ -1,1 +1,5 @@
 usr/include/libdeflate.h
+usr/lib/*/cmake/
+usr/lib/*/libdeflate.a
+usr/lib/*/libdeflate.so
+usr/lib/*/pkgconfig/
