@@ -1,5 +1,82 @@
 # libdeflate release notes
 
+## Version 1.23
+
+* Fixed bug introduced in 1.20 where incorrect checksums could be calculated if
+  libdeflate was compiled with clang at -O0 and run on a CPU supporting AVX512.
+
+* Fixed bug introduced in 1.20 where incorrect checksums could be calculated in
+  rare cases on macOS computers that support AVX512 and are running an older
+  version of macOS that contains a bug that corrupts AVX512 registers.  This
+  could occur only if code outside libdeflate enabled AVX512 in the thread.
+
+* Fixed build error when using -mno-evex512 with clang 18+ or gcc 14+.
+
+* Increased the minimum CMake version to 3.10.
+
+* Further optimized the x86 CRC code.
+
+## Version 1.22
+
+* The CMake-based build system now implements a workaround for gcc being paired
+  with a too-old binutils version.  This can prevent build errors.
+
+## Version 1.21
+
+* Fixed build error on x86 with gcc 8.1 and gcc 8.2.
+
+* Fixed build error on x86 when gcc 11 is paired with a binutils version that
+  doesn't support AVX-VNNI, e.g. as it is on RHEL 9.
+
+* Fixed build error on arm64 with gcc 6.
+
+* Fixed build error on arm64 with gcc 13.1 and later with some -mcpu options.
+
+* Enabled detection of dotprod support in Windows ARM64 builds.
+
+## Version 1.20
+
+* Improved CRC-32 performance on recent x86 CPUs by adding
+  VPCLMULQDQ-accelerated implementations using 256-bit and 512-bit vectors.
+
+* Improved Adler-32 performance on recent x86 CPUs by adding
+  VNNI-accelerated implementations using 256-bit and 512-bit vectors.
+
+* Improved CRC-32 and Adler-32 performance on short inputs.
+
+* Optimized the portable implementation of Adler-32.
+
+* Added some basic optimizations for RISC-V.
+
+* Dropped support for gcc versions older than v4.9 (released in 2014)
+  and clang versions older than v3.9 (released in 2016).
+
+* Dropped support for CRC-32 acceleration on 32-bit ARM using the ARMv8 pmull or
+  crc32 instructions.  This code only worked on CPUs that also have a 64-bit
+  mode, and it was already disabled on many compiler versions due to compiler
+  limitations.  CRC-32 acceleration remains fully supported on 64-bit ARM.
+
+## Version 1.19
+
+* Added new functions `libdeflate_alloc_compressor_ex()` and
+  `libdeflate_alloc_decompressor_ex()`.  These functions allow specifying a
+  custom memory allocator on a per-compressor basis.
+
+* libdeflate now always generates Huffman codes with at least 2 codewords.  This
+  fixes a compatibility issue where Windows Explorer's ZIP unpacker could not
+  decompress DEFLATE streams created by libdeflate.  libdeflate's behavior was
+  allowed by the DEFLATE RFC, but not all software was okay with it.  In rare
+  cases, compression ratios can be slightly reduced by this change.
+
+* Disabled the use of some compiler intrinsics on MSVC versions where they don't
+  work correctly.
+
+* libdeflate can now compress up to the exact size of the output buffer.
+
+* Slightly improved compression performance at levels 1-9.
+
+* Improved the compression ratio of very short inputs.
+
 ## Version 1.18
 
 * Fixed a bug where the build type didn't default to "Release" when using

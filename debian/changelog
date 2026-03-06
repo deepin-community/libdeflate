@@ -1,3 +1,62 @@
+libdeflate (1.23-2) unstable; urgency=low
+
+  * d/control: use my @debian.org email address
+  * d/copyright: add me and Nick to the debian/* stanza
+  * d/control: declare dpkg-build-api = 1
+
+ -- Andrea Pappacoda <tachi@debian.org>  Wed, 09 Apr 2025 18:18:12 +0200
+
+libdeflate (1.23-1) unstable; urgency=medium
+
+  * New upstream 1.23.
+
+ -- nick black <dankamongmen@gmail.com>  Tue, 14 Jan 2025 09:45:40 -0500
+
+libdeflate (1.22-1) unstable; urgency=medium
+
+  * New upstream 1.22.
+
+ -- nick black <dankamongmen@gmail.com>  Mon, 07 Oct 2024 02:45:06 -0400
+
+libdeflate (1.21-1) unstable; urgency=medium
+
+  [ Michael R. Crusoe ]
+  * d/rules: skip making manpages if we are cross-building.
+
+  [ Nick Black ]
+  * New upstream
+  * Upload from team deflate
+
+  [ Andrea Pappacoda ]
+  * Correct sections, appropriate .install files, DEP-14
+
+ -- Nick Black <dankamongmen@gmail.com>  Tue, 13 Aug 2024 10:48:52 -0400
+
+libdeflate (1.20-1) unstable; urgency=medium
+
+  * New upstream version
+  * d/rules: stop doing a profile-guide build, especially since CPU
+    dispatch is being used.
+  * d/copyright: update my email address. Update years for upstream and
+    myself.
+  * d/{control,rules}: no longer need direct dependency on debhelper-perl.
+                       zlib1g-dev is only needed for the tests.
+  * use help2man to create manual pages.
+  * d/control: expand description of the libdeflate-tools package.
+  * d/rules: run even more tests.
+
+ -- Michael R. Crusoe <crusoe@debian.org>  Sat, 23 Mar 2024 14:26:36 +0100
+
+libdeflate (1.19-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version
+  * d/rules: Reduce compiler optimization on alpha (Closes: #1028624)
+  * d/libdeflate0.symbols: Add new symbols (libdeflate_alloc_compressor_ex,
+    libdeflate_alloc_decompressor_ex)
+
+ -- Lance Lin <lq27267@gmail.com>  Wed, 31 Jan 2024 22:26:50 +0700
+
 libdeflate (1.18-1) unstable; urgency=medium
 
   [ Lance Lin ]
