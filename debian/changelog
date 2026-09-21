@@ -1,3 +1,9 @@
+libdeflate (1.23-2deepin1) unstable; urgency=medium
+
+  * Rebuild with LTO enabled (dpkg vendor feature optimize/lto).
+
+ -- tunaichao <tunaichao@uniontech.com>  Mon, 21 Sep 2026 15:15:10 +0800
+
 libdeflate (1.23-2) unstable; urgency=low
 
   * d/control: use my @debian.org email address
